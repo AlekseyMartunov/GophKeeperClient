@@ -1,6 +1,8 @@
 package pair
 
-import "time"
+import (
+	"time"
+)
 
 type Pair struct {
 	Name        string

@@ -8,18 +8,20 @@ import (
 type pairStorage interface {
 	Save(ctx context.Context, p pair.Pair) error
 	Get(ctx context.Context, Name string) (pair.Pair, error)
-	GetAll() ([]pair.Pair, error)
+	GetAll(ctx context.Context) ([]pair.Pair, error)
+	Delete(ctx context.Context, name string) error
 }
 
 type pairHTTPClient interface {
-	Send(p pair.Pair) error
+	Save(p pair.Pair) error
 	Get(Name string) (pair.Pair, error)
 	GetAll() ([]pair.Pair, error)
+	Delete(name string) error
 }
 
 type encrypter interface {
-	Encrypt(text, key string) (string, error)
-	Decrypt(text, key string) (string, error)
+	EncryptString(text, key string) (string, error)
+	DecryptString(text, key string) (string, error)
 }
 
 type PairService struct {
@@ -56,20 +58,64 @@ func (ps *PairService) SaveRemote(p pair.Pair, key string) error {
 		return err
 	}
 
-	err = ps.client.Send(p)
+	err = ps.client.Save(p)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ps *PairService) encrypt(p pair.Pair, key string) (pair.Pair, error) {
-	password, err := ps.crypto.Encrypt(p.Password, key)
+func (ps *PairService) GetFromLocal(name, key string) (pair.Pair, error) {
+	p, err := ps.repo.Get(context.Background(), name)
 	if err != nil {
 		return p, err
 	}
 
-	login, err := ps.crypto.Encrypt(p.Login, key)
+	decryptedPair, err := ps.decrypt(p, key)
+	if err != nil {
+		return p, err
+	}
+
+	return decryptedPair, nil
+}
+
+func (ps *PairService) GetFromRemote(name, key string) (pair.Pair, error) {
+	p, err := ps.client.Get(name)
+	if err != nil {
+		return p, err
+	}
+
+	p, err = ps.decrypt(p, key)
+	if err != nil {
+		return p, err
+	}
+
+	return p, nil
+}
+
+func (ps *PairService) GetAllFromLocal() ([]pair.Pair, error) {
+	return ps.repo.GetAll(context.Background())
+}
+
+func (ps *PairService) GetAllFromRemote() ([]pair.Pair, error) {
+	return ps.client.GetAll()
+}
+
+func (ps *PairService) DeleteFromLocal(name string) error {
+	return ps.repo.Delete(context.Background(), name)
+}
+
+func (ps *PairService) DeleteFromRemote(name string) error {
+	return ps.client.Delete(name)
+}
+
+func (ps *PairService) encrypt(p pair.Pair, key string) (pair.Pair, error) {
+	password, err := ps.crypto.EncryptString(p.Password, key)
+	if err != nil {
+		return p, err
+	}
+
+	login, err := ps.crypto.EncryptString(p.Login, key)
 	if err != nil {
 		return p, err
 	}
@@ -80,17 +126,18 @@ func (ps *PairService) encrypt(p pair.Pair, key string) (pair.Pair, error) {
 }
 
 func (ps *PairService) decrypt(p pair.Pair, key string) (pair.Pair, error) {
-	password, err := ps.crypto.Decrypt(p.Password, key)
+	password, err := ps.crypto.DecryptString(p.Password, key)
 	if err != nil {
 		return p, err
 	}
 
-	login, err := ps.crypto.Decrypt(p.Login, key)
+	login, err := ps.crypto.DecryptString(p.Login, key)
 	if err != nil {
 		return p, err
 	}
 
 	p.Password = password
 	p.Login = login
+
 	return p, nil
 }
