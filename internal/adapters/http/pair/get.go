@@ -11,7 +11,7 @@ import (
 func (pc *PairClientHTTP) Get(pairName string) (pair.Pair, error) {
 	req, err := pc.client.R().
 		SetHeader("Authorization", pc.config.Token()).
-		Get(fmt.Sprintf("%s/%s/%s", pc.config.ServerADDR(), pc.config.PairURL(), pairName))
+		Get(fmt.Sprintf("%s/%s/%s", pc.config.ServerADDR(), pairURL, pairName))
 
 	if err != nil {
 		return pair.Pair{}, err

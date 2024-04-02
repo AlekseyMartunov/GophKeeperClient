@@ -6,10 +6,11 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
+const tokenURL = "users/login"
+
 type config interface {
 	UpdateToken(t string)
 	ServerADDR() string
-	TokenURL() string
 }
 
 type logger interface {
@@ -55,7 +56,7 @@ func (tc *TokenClientHTTP) UpdateToken(clientName, login, password string) error
 
 	req, err := tc.client.R().
 		SetBody(b).
-		Post(fmt.Sprintf("%s/%s", tc.cfg.ServerADDR(), tc.cfg.TokenURL()))
+		Post(fmt.Sprintf("%s/%s", tc.cfg.ServerADDR(), tokenURL))
 
 	if err != nil {
 		tc.log.Error(err)

@@ -21,7 +21,7 @@ func (cc *CardClientHTTP) Save(c card.Card) error {
 	req, err := cc.client.R().
 		SetHeader("Authorization", cc.config.Token()).
 		SetBody(b).
-		Post(fmt.Sprintf("%s/%s", cc.config.ServerADDR(), cc.config.CardURL()))
+		Post(fmt.Sprintf("%s/%s", cc.config.ServerADDR(), cardURL))
 
 	if err != nil {
 		cc.log.Error(err)

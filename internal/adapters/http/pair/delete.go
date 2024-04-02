@@ -9,7 +9,7 @@ import (
 func (pc *PairClientHTTP) Delete(pairName string) error {
 	req, err := pc.client.R().
 		SetHeader("Authorization", pc.config.Token()).
-		Delete(fmt.Sprintf("%s/%s/%s", pc.config.ServerADDR(), pc.config.PairURL(), pairName))
+		Delete(fmt.Sprintf("%s/%s/%s", pc.config.ServerADDR(), pairURL, pairName))
 
 	if err != nil {
 		pc.log.Error(err)

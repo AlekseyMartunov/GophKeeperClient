@@ -2,9 +2,10 @@ package pairclienthttp
 
 import "github.com/go-resty/resty/v2"
 
+const pairURL = "pairs"
+
 type config interface {
 	ServerADDR() string
-	PairURL() string
 	Token() string
 }
 

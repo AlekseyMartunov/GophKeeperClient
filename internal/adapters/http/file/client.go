@@ -1,8 +1,10 @@
-package cardclienthttp
+package fileclienthttp
 
 import "github.com/go-resty/resty/v2"
 
-const cardURL = "card"
+const (
+	fileURL = "file"
+)
 
 type config interface {
 	ServerADDR() string
@@ -14,14 +16,14 @@ type logger interface {
 	Error(err error)
 }
 
-type CardClientHTTP struct {
+type FileClientHTTP struct {
 	client *resty.Client
 	config config
 	log    logger
 }
 
-func NewCardClientHTTP(c config, l logger) *CardClientHTTP {
-	return &CardClientHTTP{
+func NewFileClientHTTP(c config, l logger) *FileClientHTTP {
+	return &FileClientHTTP{
 		client: resty.New(),
 		config: c,
 		log:    l,

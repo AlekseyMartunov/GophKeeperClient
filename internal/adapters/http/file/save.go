@@ -1,35 +1,35 @@
-package pairclienthttp
+package fileclienthttp
 
 import (
-	"GophKeeperClient/internal/entity/pair"
+	"GophKeeperClient/internal/entity/file"
 	httpErrors "GophKeeperClient/internal/errors/http"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-func (pc *PairClientHTTP) Save(p pair.Pair) error {
-	d := dto{}
-	d.fromEntity(p)
+func (fc *FileClientHTTP) Send(f file.File) error {
+	dto := fileDTO{}
+	dto.FromEntity(f)
 
-	b, err := json.Marshal(d)
+	b, err := json.Marshal(dto)
 	if err != nil {
-		pc.log.Error(err)
+		fc.log.Error(err)
 		return err
 	}
 
-	req, err := pc.client.R().
-		SetHeader("Authorization", pc.config.Token()).
+	req, err := fc.client.R().
+		SetHeader("Authorization", fc.config.Token()).
 		SetBody(b).
-		Post(fmt.Sprintf("%s/%s", pc.config.ServerADDR(), pairURL))
+		Post(fmt.Sprintf("%s/%s", fc.config.ServerADDR(), fileURL))
 
 	if err != nil {
-		pc.log.Error(err)
+		fc.log.Error(err)
 		return err
 	}
 
 	if req.StatusCode() != http.StatusOK {
-		pc.log.Info(string(req.Body()))
+		fc.log.Info(string(req.Body()))
 
 		switch req.StatusCode() {
 		case http.StatusInternalServerError:

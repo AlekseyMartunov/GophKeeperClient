@@ -6,6 +6,7 @@ import (
 	migration "GophKeeperClient/internal/adapters/db/postgres/migrations"
 	pairStorage "GophKeeperClient/internal/adapters/db/postgres/pair"
 	cardClientHTTP "GophKeeperClient/internal/adapters/http/card"
+	fileClientHTTP "GophKeeperClient/internal/adapters/http/file"
 	pairClientHTTP "GophKeeperClient/internal/adapters/http/pair"
 	tokenClientHTTP "GophKeeperClient/internal/adapters/http/token"
 	"GophKeeperClient/internal/config"
@@ -35,7 +36,7 @@ func Run(ctx context.Context) error {
 	log := logger.NewLogger()
 	tokenClient := tokenClientHTTP.NewTokenClientHTTP(cfg, log)
 
-	err = tokenClient.UpdateToken("c1-4", "a", "a")
+	err = tokenClient.UpdateToken("c1-8", "a", "a")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -52,6 +53,9 @@ func Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	fileClient := fileClientHTTP.NewFileClientHTTP(cfg, log)
+
+	fmt.Println(fileClient)
 
 	fmt.Println(pairService, cardService, fileStorage)
 

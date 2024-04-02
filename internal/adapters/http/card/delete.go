@@ -9,7 +9,7 @@ import (
 func (cc *CardClientHTTP) Delete(cardName string) error {
 	req, err := cc.client.R().
 		SetHeader("Authorization", cc.config.Token()).
-		Delete(fmt.Sprintf("%s/%s/%s", cc.config.ServerADDR(), cc.config.CardURL(), cardName))
+		Delete(fmt.Sprintf("%s/%s/%s", cc.config.ServerADDR(), cardURL, cardName))
 
 	if err != nil {
 		cc.log.Error(err)

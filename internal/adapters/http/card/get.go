@@ -11,7 +11,7 @@ import (
 func (cc *CardClientHTTP) Get(cardName string) (card.Card, error) {
 	req, err := cc.client.R().
 		SetHeader("Authorization", cc.config.Token()).
-		Get(fmt.Sprintf("%s/%s/%s", cc.config.ServerADDR(), cc.config.CardURL(), cardName))
+		Get(fmt.Sprintf("%s/%s/%s", cc.config.ServerADDR(), cardURL, cardName))
 
 	if err != nil {
 		return card.Card{}, err
