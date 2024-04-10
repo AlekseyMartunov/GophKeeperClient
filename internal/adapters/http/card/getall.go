@@ -38,7 +38,7 @@ func (cc *CardClientHTTP) GetAll() ([]card.Card, error) {
 		return nil, err
 	}
 
-	cards := make([]card.Card, 0, 5)
+	cards := make([]card.Card, 0, len(dtoCards))
 
 	for _, c := range dtoCards {
 		cards = append(cards, c.toEntity())

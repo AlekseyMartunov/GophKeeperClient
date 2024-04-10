@@ -17,9 +17,9 @@ func NewLogger() *Logger {
 }
 
 func (l *Logger) Info(text string) {
-	l.log.Infoln(text)
+	//l.log.Infoln(text)
 }
 
 func (l *Logger) Error(err error) {
-	l.log.Errorln(err.Error())
+	//l.log.Errorln(err.Error())
 }

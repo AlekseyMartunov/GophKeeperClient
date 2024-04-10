@@ -7,7 +7,9 @@ import (
 	"log"
 )
 
-const location = "us-east-1"
+const (
+	location = "us-east-1"
+)
 
 type config interface {
 	MinioAccessKeyID() string
@@ -18,6 +20,7 @@ type config interface {
 
 type FileStorage struct {
 	client *minio.Client
+	config config
 }
 
 func NewFileStorage(ctx context.Context, cfg config) (*FileStorage, error) {
@@ -39,5 +42,5 @@ func NewFileStorage(ctx context.Context, cfg config) (*FileStorage, error) {
 		log.Printf("Successfully created %s\n", cfg.MinioBucketName())
 	}
 
-	return &FileStorage{client: minioClient}, nil
+	return &FileStorage{client: minioClient, config: cfg}, nil
 }

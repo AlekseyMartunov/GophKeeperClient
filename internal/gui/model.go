@@ -1,27 +1,40 @@
 package gui
 
 import (
+	savedfiles "GophKeeperClient/internal/gui/savedFiles"
+	"GophKeeperClient/internal/gui/savedcards"
+	"GophKeeperClient/internal/gui/savedpairs"
 	"github.com/rivo/tview"
 )
 
-func Run() error {
+func Run(cfg config,
+	userClient userClientHTTP,
+	tokenClient tokenClientHTTP,
+	card cardService,
+	password passwordService,
+	file fileService,
+) error {
 	app := tview.NewApplication()
 
 	pages := tview.NewPages()
-	pages.AddPage("login", newLoginPage(), true, false)
-	pages.AddPage("registration", newRegistrationPage(), true, false)
-	pages.AddPage("clients", newClientsPage(), true, false)
-	pages.AddPage("card", newCardPage(), true, false)
-	pages.AddPage("password", newPasswordPage(), true, false)
+	pages.AddPage("registration", newRegistrationPage(userClient), true, false)
+	pages.AddPage("login", newLoginPage(tokenClient), true, false)
+	pages.AddPage("clients", newClientsPage(tokenClient), true, false)
+	pages.AddPage("card", newCardPageAdd(card), true, false)
+	pages.AddPage("password", newPasswordPage(password), true, false)
+	pages.AddPage("addFile", NewAddFilePage(file), true, false)
+	pages.AddPage("savedCards", savedcards.NewSavedCardsPage(card), true, false)
+	pages.AddPage("savedPairs", savedpairs.NewSavedPairsPage(password), true, false)
+	pages.AddPage("savedFiles", savedfiles.NewSavedPairsPage(file), true, false)
 
 	list := tview.NewList()
 
-	list.AddItem("LOGIN", "", '1', func() {
-		pages.SwitchToPage("login")
+	list.AddItem("REGISTRATION", "", '1', func() {
+		pages.SwitchToPage("registration")
 	})
 
-	list.AddItem("REGISTRATION", "", '2', func() {
-		pages.SwitchToPage("registration")
+	list.AddItem("LOGIN", "", '2', func() {
+		pages.SwitchToPage("login")
 	})
 
 	list.AddItem("CLIENTS", "", '3', func() {
@@ -37,18 +50,22 @@ func Run() error {
 	})
 
 	list.AddItem("ADD FILE", "", '6', func() {
-		pages.SwitchToPage("file")
+		pages.SwitchToPage("addFile")
 	})
 
-	list.AddItem("LOCAl DATA", "", '6', func() {
-		pages.SwitchToPage("local")
+	list.AddItem("SAVED CREDIT CARDS", "", '7', func() {
+		pages.SwitchToPage("savedCards")
 	})
 
-	list.AddItem("REMOTE DATA", "", '6', func() {
-		pages.SwitchToPage("remote")
+	list.AddItem("SAVED PASSWORDS", "", '8', func() {
+		pages.SwitchToPage("savedPairs")
 	})
 
-	list.AddItem("EXIT", "", '7', func() {
+	list.AddItem("SAVED FILES", "", '9', func() {
+		pages.SwitchToPage("savedFiles")
+	})
+
+	list.AddItem("EXIT", "", '*', func() {
 		app.Stop()
 	})
 

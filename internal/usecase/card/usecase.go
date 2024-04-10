@@ -30,7 +30,7 @@ type CardService struct {
 	crypto encrypter
 }
 
-func NewPairService(r cardStorage, c cardHTTPClient, e encrypter) *CardService {
+func NewCardService(r cardStorage, c cardHTTPClient, e encrypter) *CardService {
 	return &CardService{
 		repo:   r,
 		client: c,
@@ -115,17 +115,17 @@ func (cs *CardService) encrypt(c card.Card, key string) (card.Card, error) {
 		return c, err
 	}
 
-	owner, err := cs.crypto.EncryptString(c.Number, key)
+	owner, err := cs.crypto.EncryptString(c.Owner, key)
 	if err != nil {
 		return c, err
 	}
 
-	cvv, err := cs.crypto.EncryptString(c.Number, key)
+	cvv, err := cs.crypto.EncryptString(c.CVV, key)
 	if err != nil {
 		return c, err
 	}
 
-	date, err := cs.crypto.EncryptString(c.Number, key)
+	date, err := cs.crypto.EncryptString(c.Date, key)
 	if err != nil {
 		return c, err
 	}

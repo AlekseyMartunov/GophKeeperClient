@@ -1,21 +1,31 @@
 package gui
 
 import (
-	"fmt"
 	"github.com/rivo/tview"
 )
 
-func newRegistrationPage() *tview.Flex {
+func newRegistrationPage(userClient userClientHTTP) *tview.Flex {
 	infoBox := tview.NewTextArea()
-	infoBox.SetText("some text here", false)
 
 	form := tview.NewForm()
 	form.AddInputField("enter your login", "", 20, nil, nil)
 	form.AddPasswordField("enter your password", "", 20, '*', nil)
+	form.AddPasswordField("enter your password agan", "", 20, '*', nil)
 	form.AddButton("REGISTRATION", func() {
-		textLogin := form.GetFormItem(0).(*tview.InputField).GetText()
-		textPassword := form.GetFormItem(1).(*tview.InputField).GetText()
-		infoBox.SetText(fmt.Sprintf("%s \n %s", textLogin, textPassword), false)
+		Login := form.GetFormItem(0).(*tview.InputField).GetText()
+		password := form.GetFormItem(1).(*tview.InputField).GetText()
+		passwordRepeat := form.GetFormItem(2).(*tview.InputField).GetText()
+
+		if password != passwordRepeat {
+			infoBox.SetText("Пароли не совпадают", false)
+		} else {
+			err := userClient.RegisterUser(Login, password)
+			if err != nil {
+				infoBox.SetText(err.Error(), false)
+			} else {
+				infoBox.SetText("OK", false)
+			}
+		}
 	})
 
 	flex := tview.NewFlex()

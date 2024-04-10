@@ -8,6 +8,7 @@ type Config struct {
 	minioSecretAccessKey string
 	minioEndpoint        string
 	minioBucketName      string
+	clientUserLogin      string
 }
 
 func NewConfig() *Config {
@@ -17,7 +18,7 @@ func NewConfig() *Config {
 		minioAccessKeyID:     "minio",
 		minioSecretAccessKey: "minio123",
 		minioEndpoint:        "127.0.0.1:9000",
-		minioBucketName:      "somebucket",
+		minioBucketName:      "default-bucket",
 	}
 }
 
@@ -51,4 +52,12 @@ func (c *Config) MinioEndpoint() string {
 
 func (c *Config) MinioBucketName() string {
 	return c.minioBucketName
+}
+
+func (c *Config) ClientUserLogin(name string) {
+	c.clientUserLogin = name
+}
+
+func (c *Config) GetClientUserLogin() string {
+	return c.clientUserLogin
 }

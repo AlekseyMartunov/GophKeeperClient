@@ -17,8 +17,8 @@ func (d *fileDTO) FromEntity(f file.File) {
 	d.CreatedTime = f.CreatedTime
 }
 
-func (d *fileDTO) ToEntity() file.File {
-	return file.File{
+func (d *fileDTO) ToEntity() *file.File {
+	return &file.File{
 		Name:        d.Name,
 		Data:        d.Data,
 		CreatedTime: d.CreatedTime,

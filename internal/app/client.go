@@ -9,9 +9,11 @@ import (
 	fileClientHTTP "GophKeeperClient/internal/adapters/http/file"
 	pairClientHTTP "GophKeeperClient/internal/adapters/http/pair"
 	tokenClientHTTP "GophKeeperClient/internal/adapters/http/token"
+	userClientHTTP "GophKeeperClient/internal/adapters/http/users"
 	"GophKeeperClient/internal/config"
 	"GophKeeperClient/internal/encrypter"
 	cardService "GophKeeperClient/internal/usecase/card"
+	fileService "GophKeeperClient/internal/usecase/file"
 	pairService "GophKeeperClient/internal/usecase/pair"
 	"GophKeeperClient/pkg/logger"
 	"context"
@@ -36,10 +38,7 @@ func Run(ctx context.Context) error {
 	log := logger.NewLogger()
 	tokenClient := tokenClientHTTP.NewTokenClientHTTP(cfg, log)
 
-	err = tokenClient.UpdateToken("c1-8", "a", "a")
-	if err != nil {
-		fmt.Println(err)
-	}
+	userClientHTTP := userClientHTTP.NewUserClientHTTP(cfg, log)
 
 	pairStorage := pairStorage.NewPairStorage(pool)
 	pairClient := pairClientHTTP.NewPairClientHTTP(cfg, log)
@@ -47,7 +46,7 @@ func Run(ctx context.Context) error {
 
 	cardStorage := cardStorage.NewCardStorage(pool)
 	cardClient := cardClientHTTP.NewCardClientHTTP(cfg, log)
-	cardService := cardService.NewPairService(cardStorage, cardClient, encryptor)
+	cardService := cardService.NewCardService(cardStorage, cardClient, encryptor)
 
 	fileStorage, err := fileStorage.NewFileStorage(ctx, cfg)
 	if err != nil {
@@ -55,9 +54,16 @@ func Run(ctx context.Context) error {
 	}
 	fileClient := fileClientHTTP.NewFileClientHTTP(cfg, log)
 
-	fmt.Println(fileClient)
+	fileService := fileService.NewFileService(fileStorage, fileClient, encryptor)
 
-	fmt.Println(pairService, cardService, fileStorage)
+	//gui.Run(cfg, userClientHTTP, tokenClient, cardService, pairService, fileService)
+
+	fmt.Println(pairService, cardService, fileStorage, fileService, tokenClient, userClientHTTP)
+
+	f, err := fileService.GetFromLocal("test.txt", "123")
+	fmt.Println(err)
+	fmt.Println(f)
+	fmt.Println(string(f.Data))
 
 	return nil
 }
