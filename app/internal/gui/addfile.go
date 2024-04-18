@@ -16,8 +16,6 @@ func NewAddFilePage(service fileService) *tview.Flex {
 	fileList := tview.NewList()
 
 	form.AddInputField("set file path", "", 40, nil, nil)
-	form.AddPasswordField("secret key", "", 20, '*', nil)
-	form.AddPasswordField("secret Key repeat", "", 20, '*', nil)
 	form.AddCheckbox("Save local", false, nil)
 	form.AddCheckbox("Save remote", false, nil)
 
@@ -50,22 +48,14 @@ func NewAddFilePage(service fileService) *tview.Flex {
 			}
 			return
 		}
-		b := make([]byte, 0)
-		_, err = f.Read(b)
+		b, err := os.ReadFile(p)
 		if err != nil {
 			errBox.SetText(err.Error())
-			return
 		}
+		errBox.SetText(fmt.Sprintf("read %d bytes, path: %s", len(b), p))
 
-		key1 := form.GetFormItem(1).(*tview.InputField).GetText()
-		key2 := form.GetFormItem(2).(*tview.InputField).GetText()
-		if key2 != key1 {
-			errBox.SetText("secret keys don't match")
-			return
-		}
-
-		saveLocal := form.GetFormItem(3).(*tview.Checkbox).IsChecked()
-		saveRemote := form.GetFormItem(4).(*tview.Checkbox).IsChecked()
+		saveLocal := form.GetFormItem(1).(*tview.Checkbox).IsChecked()
+		saveRemote := form.GetFormItem(2).(*tview.Checkbox).IsChecked()
 
 		fileEntity := file.File{
 			Name:        info.Name(),

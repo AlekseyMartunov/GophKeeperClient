@@ -22,7 +22,6 @@ type fileService interface {
 
 var errorBox = tview.NewTextView()
 var getDetailInfoButton = tview.NewButton("Get ...")
-var secretKeyForm = tview.NewForm()
 var detailInfoBox = tview.NewTextView()
 
 var localFilesList = tview.NewList()
@@ -70,10 +69,7 @@ func NewSavedPairsPage(service fileService) *tview.Flex {
 		updateGetDetailInfoButtonRemote(service, selectedCard)
 	})
 
-	secretKeyForm.AddPasswordField("secret key", "", 20, '*', nil)
-
 	infoFlex.AddItem(getDetailInfoButton, 0, 1, false)
-	infoFlex.AddItem(secretKeyForm, 0, 1, false)
 	infoFlex.AddItem(detailInfoBox, 0, 2, false)
 	infoFlex.AddItem(errorBox, 0, 2, false)
 	infoFlex.SetDirection(tview.FlexRow)

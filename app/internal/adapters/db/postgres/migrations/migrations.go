@@ -29,7 +29,7 @@ func MigrationsUp(dsn string) error {
 	err = m.Up()
 	if err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {
-			return fmt.Errorf("migration error: %w", err)
+			return fmt.Errorf("user migration error: %w", err)
 		}
 	}
 
@@ -52,7 +52,7 @@ func MigrationsDown(dsn string) error {
 	err = m.Down()
 	if err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {
-			return fmt.Errorf("migration error: %w", err)
+			return fmt.Errorf("user migration error: %w", err)
 		}
 	}
 	return nil
@@ -67,5 +67,5 @@ func getHomeDir() (string, error) {
 	for filepath.Base(path) != homeDir {
 		path = filepath.Dir(path)
 	}
-	return path, nil
+	return fmt.Sprintf("%s/%s", path, "app"), nil
 }

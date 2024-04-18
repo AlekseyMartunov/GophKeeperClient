@@ -24,6 +24,7 @@ import (
 
 func Run(ctx context.Context) error {
 	cfg := config.NewConfig()
+	cfg.ParseFlags()
 
 	err := migration.MigrationsUp(cfg.PostgresDSN())
 	if err != nil {

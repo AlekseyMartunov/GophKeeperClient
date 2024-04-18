@@ -14,7 +14,14 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	return &Config{}
+	return &Config{
+		serverADDR:           "http://127.0.0.1:8080",
+		dataBaseDSN:          "postgres://admin:1234@localhost:5431/testClient?sslmode=disable",
+		minioAccessKeyID:     "minio",
+		minioSecretAccessKey: "minio123",
+		minioEndpoint:        "127.0.0.1:9000",
+		minioBucketName:      "default-bucket",
+	}
 }
 
 func (c *Config) ParseFlags() {
