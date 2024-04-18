@@ -12,6 +12,7 @@ import (
 	userClientHTTP "GophKeeperClient/internal/adapters/http/users"
 	"GophKeeperClient/internal/config"
 	"GophKeeperClient/internal/encrypter"
+	"GophKeeperClient/internal/gui"
 	cardService "GophKeeperClient/internal/usecase/card"
 	fileService "GophKeeperClient/internal/usecase/file"
 	pairService "GophKeeperClient/internal/usecase/pair"
@@ -56,14 +57,7 @@ func Run(ctx context.Context) error {
 
 	fileService := fileService.NewFileService(fileStorage, fileClient, encryptor)
 
-	//gui.Run(cfg, userClientHTTP, tokenClient, cardService, pairService, fileService)
-
-	fmt.Println(pairService, cardService, fileStorage, fileService, tokenClient, userClientHTTP)
-
-	f, err := fileService.GetFromLocal("test.txt", "123")
-	fmt.Println(err)
-	fmt.Println(f)
-	fmt.Println(string(f.Data))
+	gui.Run(cfg, userClientHTTP, tokenClient, cardService, pairService, fileService)
 
 	return nil
 }

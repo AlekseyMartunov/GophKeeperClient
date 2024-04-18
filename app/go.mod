@@ -2,13 +2,12 @@ module GophKeeperClient
 
 go 1.21
 
-toolchain go1.22.1
-
 require (
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.5
+	github.com/minio/minio-go/v7 v7.0.69
 	github.com/rivo/tview v0.0.0-20240307173318-e804876934a1
 	github.com/sirupsen/logrus v1.9.3
 )
@@ -30,7 +29,6 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.69 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

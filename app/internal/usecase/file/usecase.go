@@ -40,47 +40,32 @@ func NewFileService(r storage, c client, e encryptor) *FileService {
 	}
 }
 
-func (fs *FileService) SaveLocal(f *file.File, key string) error {
-	f, err := fs.encrypt(f, key)
-	if err != nil {
-		return err
-	}
-	err = fs.repo.Save(context.Background(), f)
+func (fs *FileService) SaveLocal(f *file.File) error {
+	err := fs.repo.Save(context.Background(), f)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (fs *FileService) SaveRemote(f *file.File, key string) error {
-	f, err := fs.encrypt(f, key)
-	if err != nil {
-		return err
-	}
+func (fs *FileService) SaveRemote(f *file.File) error {
 	return fs.client.Send(*f)
 }
 
-func (fs *FileService) GetFromLocal(fileName, key string) (*file.File, error) {
+func (fs *FileService) GetFromLocal(fileName string) (*file.File, error) {
 	f, err := fs.repo.GetFile(context.Background(), fileName)
-	if err != nil {
-		return nil, err
-	}
-	f, err = fs.decrypt(f, key)
 	if err != nil {
 		return nil, err
 	}
 	return f, nil
 }
 
-func (fs *FileService) GetFromRemote(fileName, key string) (*file.File, error) {
+func (fs *FileService) GetFromRemote(fileName string) (*file.File, error) {
 	f, err := fs.client.Get(fileName)
 	if err != nil {
 		return nil, err
 	}
-	f, err = fs.decrypt(f, key)
-	if err != nil {
-		return nil, err
-	}
+
 	return f, nil
 }
 
@@ -98,31 +83,4 @@ func (fs *FileService) DeleteFromLocal(fileName string) error {
 
 func (fs *FileService) DeleteFromRemote(fileName string) error {
 	return fs.client.Delete(fileName)
-}
-
-func (fs *FileService) encrypt(f *file.File, key string) (*file.File, error) {
-	b, err := fs.encryptor.EncryptByte(f.Data, []byte(key))
-	if err != nil {
-		return nil, err
-	}
-
-	return &file.File{
-		Name:        f.Name,
-		Data:        b,
-		CreatedTime: f.CreatedTime,
-	}, nil
-}
-
-func (fs *FileService) decrypt(f *file.File, key string) (*file.File, error) {
-	b, err := fs.encryptor.DecryptByte(f.Data, []byte(key))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &file.File{
-		Name:        f.Name,
-		Data:        b,
-		CreatedTime: f.CreatedTime,
-	}, nil
 }
