@@ -12,22 +12,11 @@ services:
       MINIO_ENDPOINT: "127.0.0.1:9001"
     ports:
       - "8080:8080"
+    command: /app
 
     depends_on:
       - minioServer
       - postgresServer
-
-  postgresClient:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: "testClient"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "1234"
-    command:
-      -p 5431
-    ports:
-      - "5431:5431"
-
 
   postgresServer:
     image: postgres:latest
