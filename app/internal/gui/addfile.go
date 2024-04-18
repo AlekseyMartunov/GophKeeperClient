@@ -74,14 +74,14 @@ func NewAddFilePage(service fileService) *tview.Flex {
 		}
 
 		if saveLocal {
-			err = service.SaveLocal(&fileEntity, key1)
+			err = service.SaveLocal(&fileEntity)
 			if err != nil {
 				errBox.SetText(err.Error())
 			}
 		}
 
 		if saveRemote {
-			err = service.SaveRemote(&fileEntity, key1)
+			err = service.SaveRemote(&fileEntity)
 			if err != nil {
 				errBox.SetText(err.Error())
 			}

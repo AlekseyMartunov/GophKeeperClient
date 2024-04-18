@@ -43,10 +43,10 @@ type passwordService interface {
 }
 
 type fileService interface {
-	SaveLocal(f *file.File, key string) error
-	SaveRemote(f *file.File, key string) error
-	GetFromLocal(fileName, key string) (*file.File, error)
-	GetFromRemote(fileName, key string) (*file.File, error)
+	SaveLocal(f *file.File) error
+	SaveRemote(f *file.File) error
+	GetFromLocal(fileName string) (*file.File, error)
+	GetFromRemote(fileName string) (*file.File, error)
 	GetAllFromLocal() ([]*file.File, error)
 	GetAllFromRemote() ([]*file.File, error)
 	DeleteFromLocal(fileName string) error

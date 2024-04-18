@@ -2,7 +2,7 @@ version: "latest"
 services:
   gophKeeperClient:
     image: keeper_client
-    entrypoint:
+    environment:
       POSTGRES_DSN: "postgres://admin:1234@localhost:5431/testClient?sslmode=disable"
       SERVER_ADDRESS: "http://127.0.0.1:8080"
       MINIO_ACCESS_KEY_ID: "minio"

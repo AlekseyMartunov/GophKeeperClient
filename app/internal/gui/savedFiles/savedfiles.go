@@ -10,10 +10,10 @@ import (
 )
 
 type fileService interface {
-	SaveLocal(f *file.File, key string) error
-	SaveRemote(f *file.File, key string) error
-	GetFromLocal(fileName, key string) (*file.File, error)
-	GetFromRemote(fileName, key string) (*file.File, error)
+	SaveLocal(f *file.File) error
+	SaveRemote(f *file.File) error
+	GetFromLocal(fileName string) (*file.File, error)
+	GetFromRemote(fileName string) (*file.File, error)
 	GetAllFromLocal() ([]*file.File, error)
 	GetAllFromRemote() ([]*file.File, error)
 	DeleteFromLocal(fileName string) error
@@ -146,8 +146,7 @@ func updateRemoveLocalButton(service fileService, name string) {
 func updateGetDetailInfoButtonLocal(service fileService, name string) {
 	getDetailInfoButton.SetLabel(fmt.Sprintf("Get detail info %s", name))
 	getDetailInfoButton.SetSelectedFunc(func() {
-		key := secretKeyForm.GetFormItem(0).(*tview.InputField).GetText()
-		file, err := service.GetFromLocal(name, key)
+		file, err := service.GetFromLocal(name)
 
 		if err != nil {
 			errorBox.Clear()
@@ -167,8 +166,7 @@ func updateGetDetailInfoButtonLocal(service fileService, name string) {
 func updateGetDetailInfoButtonRemote(service fileService, name string) {
 	getDetailInfoButton.SetLabel(fmt.Sprintf("Get detail info %s", name))
 	getDetailInfoButton.SetSelectedFunc(func() {
-		key := secretKeyForm.GetFormItem(0).(*tview.InputField).GetText()
-		file, err := service.GetFromRemote(name, key)
+		file, err := service.GetFromRemote(name)
 
 		if err != nil {
 			errorBox.Clear()
