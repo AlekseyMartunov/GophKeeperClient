@@ -1,18 +1,5 @@
 version: "latest"
 services:
-  gophKeeperClient:
-    image: keeper_client
-    environment:
-      POSTGRES_DSN: "postgres://admin:1234@localhost:5431/testClient?sslmode=disable"
-      SERVER_ADDRESS: "http://127.0.0.1:8080"
-      MINIO_ACCESS_KEY_ID: "minio"
-      MINIO_SECRET_KEY_ID: "minio123"
-      MINIO_ENDPOINT: "127.0.0.1:9000"
-      BUCKET_NAME: "default-bucket"
-    depends_on:
-      - minioClient
-      - postgresClient
-
   gophKeeperServer:
     image: keeper_server
     environment:
