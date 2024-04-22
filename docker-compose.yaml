@@ -105,5 +105,5 @@ volumes:
 
 networks:
   keeper_network:
-    external:
-      name: keeper_network
+    name: keeper_network
+    external: true
