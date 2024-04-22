@@ -1,34 +1,67 @@
 version: "latest"
+
 services:
+  gophKeeperClient:
+    container_name: gophKeeperClient
+    image: keeper_client
+    command: tail -F anything
+    environment:
+      POSTGRES_DSN: "postgres://admin:1234@postgresClient:5431/test?sslmode=disable"
+      SERVER_ADDRESS: "gophKeeperServer:8080"
+      MINIO_ACCESS_KEY_ID: "minio"
+      MINIO_SECRET_KEY_ID: "minio123"
+      MINIO_ENDPOINT: "minioClient:9000"
+      BUCKET_NAME: "some-bucket"
+    networks:
+      - keeper_network
+
   gophKeeperServer:
+    container_name: gophKeeperServer
     image: keeper_server
     environment:
       SECRET_KEY: "someSecretKey"
-      POSTGRES_DSN: "postgres://admin:1234@localhost:5432/test?sslmode=disable"
+      POSTGRES_DSN: "postgres://admin:1234@postgresServer:5432/test?sslmode=disable"
       SALT: "someSalt"
-      RUN_ADDRESS: "http://127.0.0.1:8080"
+      RUN_ADDRESS: "gophKeeperServer:8080"
       MINIO_ACCESS_KEY_ID: "minioServer"
       MINIO_SECRET_KEY_ID: "minioServer123"
-      MINIO_ENDPOINT: "127.0.0.1:9001"
+      MINIO_ENDPOINT: "minioServer:9001"
     ports:
       - "8080:8080"
-    command: /app
-
     depends_on:
       - minioServer
       - postgresServer
+    networks:
+      - keeper_network
+
+  postgresClient:
+    container_name: postgresClient
+    image: postgres:latest
+    command: -p 5431
+    environment:
+      POSTGRES_DB: "test"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "1234"
+    ports:
+      - "5431:5431"
+    networks:
+      - keeper_network
 
   postgresServer:
+    container_name: postgresServer
     image: postgres:latest
+    command: -p 5432
     environment:
       POSTGRES_DB: "test"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "1234"
     ports:
       - "5432:5432"
-
+    networks:
+      - keeper_network
 
   minioClient:
+    container_name: minioClient
     image: minio/minio:latest
     command: server --console-address ":9001" /data/
     ports:
@@ -44,9 +77,11 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
+    networks:
+      - keeper_network
 
   minioServer:
+    container_name: minioServer
     image: minio/minio:latest
     command: server --console-address ":9091" --address ":9090" /data/
     ports:
@@ -62,8 +97,13 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - keeper_network
 
 volumes:
   minio-storage:
 
-#// urlExample := "postgres://username:password@localhost:5432/database_name"
+networks:
+  keeper_network:
+    external:
+      name: keeper_network

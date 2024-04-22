@@ -1,6 +1,12 @@
 package config
 
-import "os"
+import (
+	"os"
+	"strings"
+	"errors"
+	"net"
+	"fmt"
+)
 
 type Config struct {
 	dataBaseDSN          string `env:"POSTGRES_DSN"`
@@ -11,6 +17,7 @@ type Config struct {
 	minioEndpoint        string `env:"MINIO_ENDPOINT"`
 	minioBucketName      string `env:"BUCKET_NAME"`
 	clientUserLogin      string
+	migrationPath        string `env:"MIGRATION_PATH"`
 }
 
 func NewConfig() *Config {
@@ -21,16 +28,21 @@ func NewConfig() *Config {
 		minioSecretAccessKey: "minio123",
 		minioEndpoint:        "127.0.0.1:9000",
 		minioBucketName:      "default-bucket",
+		migrationPath:        "./migrations",
 	}
 }
 
-func (c *Config) ParseFlags() {
+func (c *Config) ParseFlags() error {
 	if key, ok := os.LookupEnv("POSTGRES_DSN"); ok {
 		c.dataBaseDSN = key
 	}
 
 	if key, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
-		c.serverADDR = key
+		ip, err := getIPByDNSName(key)
+		if err != nil {
+			return err
+		}
+		c.serverADDR = ip
 	}
 
 	if key, ok := os.LookupEnv("MINIO_ACCESS_KEY_ID"); ok {
@@ -49,6 +61,11 @@ func (c *Config) ParseFlags() {
 		c.minioBucketName = key
 	}
 
+	if key, ok := os.LookupEnv("MIGRATION_PATH"); ok {
+		c.migrationPath = key
+	}
+
+	return nil
 }
 
 func (c *Config) PostgresDSN() string {
@@ -90,3 +107,33 @@ func (c *Config) ClientUserLogin(name string) {
 func (c *Config) GetClientUserLogin() string {
 	return c.clientUserLogin
 }
+
+func (c *Config) MigrationPath() string {
+	return c.migrationPath
+}
+
+func getIPByDNSName(nameDNS string) (string, error) {
+	arr := strings.Split(nameDNS, ":")
+	if len(arr) < 2 {
+		return "",  errors.New("parsing dns name error")
+	}
+
+	port := arr[1]
+
+	ips, err := net.LookupIP(arr[0])
+	if err != nil {
+		return "", err
+	}
+
+	if len(ips) < 1 {
+		return "", errors.New("not found ip add by name ")
+	}
+
+	ip := ips[0].String()
+
+
+	return fmt.Sprintf("http://%s:%s", ip, port), nil
+
+
+}
+

@@ -24,9 +24,12 @@ import (
 
 func Run(ctx context.Context) error {
 	cfg := config.NewConfig()
-	cfg.ParseFlags()
+	err := cfg.ParseFlags()
+	if err != nil {
+		return fmt.Errorf("parsing palgs error: %w", err)
+	}
 
-	err := migration.MigrationsUp(cfg.PostgresDSN())
+	err = migration.MigrationsUp(cfg)
 	if err != nil {
 		return fmt.Errorf("migration err: %w", err)
 	}
